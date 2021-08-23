@@ -13,3 +13,4 @@ Example of bare-bones platformer. Not scalable in its current state
 
 # KEY TERMS:
 + UNI-ERROR: unintentional error
++ RESOURCE/RECALL: provide suitable web link for further details
