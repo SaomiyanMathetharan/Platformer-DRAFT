@@ -5,6 +5,9 @@ function Player:new(x, y)
     Player.super.new(self, x, y, "assets/footballer_right.png")
     self.strength = 10
 
+    self.weight = 50
+    self.gravity = -40
+
     self.canJump = false
 end
 
@@ -25,6 +28,8 @@ function Player:update(dt)
     if self.last.y ~= self.y then
         self.canJump = false
     end
+
+    self.y = self.y + 200 * dt
 end
 
 

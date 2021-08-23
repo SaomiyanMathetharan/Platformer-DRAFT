@@ -16,6 +16,12 @@ function Entity:new(x, y, image_path)
     self.strength = 0
     -- Temp is short for temporary
     self.tempStrength = 0
+
+    self.weight = 0
+    -- UNI-ERROR: ALL ENTITIES MOVE UP OUT OF SCREEN-VIEW; SIMULATE ZERO GRAVITY!
+    -- self.gravity = -80
+    -- UNI-ERROR: HACKY WAY OF MAKING OBJECTS (OTHER THAN INDIVIDUALLY ASSIGNED) NOT "FALL"
+    self.gravity = 0
 end
 
 function Entity:update(dt)
@@ -23,6 +29,11 @@ function Entity:update(dt)
     self.last.y = self.y
     -- Reset the strength
     self.tempStrength = self.strength
+
+    -- Increase the gravity using the weight
+    self.gravity = self.gravity + self.weight * dt
+    -- Increase the y-position
+    self.y = self.y + self.gravity * dt
 end
 
 function Entity:draw()
@@ -31,25 +42,27 @@ end
 
 
 function Entity:wasVerticallyAligned(e)
-    -- It's basically the collisionCheck function, but with the x and width part removed.
-    -- It uses last.y because we want to know this from the previous position
+    -- Recall:  https://sheepolution.com/learn/book/23
+    -- basically collisionCheck function, but with the x and width part removed.
     return self.last.y < e.last.y + e.height and self.last.y + self.height > e.last.y
 end
 
 function Entity:wasHorizontallyAligned(e)
-    -- It's basically the collisionCheck function, but with the y and height part removed.
-    -- It uses last.x because we want to know this from the previous position
+    -- Recall:  https://sheepolution.com/learn/book/23
+    -- basically collisionCheck function, but with the y and height part removed.
     return self.last.x < e.last.x + e.width and self.last.x + self.width > e.last.x
 end
 
 
 function Entity:checkCollision(e)
     -- e will be the other entity with which we check if there is collision.
-    -- This is the final compact version from chapter 13
+    -- AABB collision check
     return self.x + self.width > e.x
     and self.x < e.x + e.width
     and self.y + self.height > e.y
     and self.y < e.y + e.height
+    -- TODO:
+    -- + BITMASKING FOR EFFICIENCY
 end
 
 function Entity:resolveCollision(e)
@@ -75,6 +88,7 @@ function Entity:resolveCollision(e)
                     self:collide(e, "left")
                 end
             end
+
         elseif self:wasHorizontallyAligned(e) then
             if self.y + self.height/2 < e.y + e.height/2 then
                 local a = self:checkResolve(e, "bottom")
@@ -110,6 +124,7 @@ function Entity:collide(e, direction)
     elseif direction == "bottom" then
         local pushback = self.y + self.height - e.y
         self.y = self.y - pushback
+        -- TReset gravity
         self.gravity = 0
     elseif direction == "top" then
         local pushback = e.y + e.height - self.y

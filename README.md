@@ -10,3 +10,6 @@ Example of bare-bones platformer. Not scalable in its current state
 + (Heavily) modify code structure, taking into account several "rooms"/"scenes" to be added later
 + Resolution control
 + etc.
+
+# KEY TERMS:
++ UNI-ERROR: unintentional error
